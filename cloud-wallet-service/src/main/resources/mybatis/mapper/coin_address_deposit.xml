@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ourdax.coindocker.dao.ChannelCoinAddressDepositDao">
+
+  <resultMap id="BaseResultMap" type="com.ourdax.coindocker.domain.ChannelCoinAddressDeposit">
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="asset_code" property="assetCode" jdbcType="VARCHAR" />
+    <result column="coin_address" property="coinAddress" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="fields">
+    id,
+    uid,
+    asset_code as assetCode,
+    coin_address as coinAddress
+  </sql>
+
+  <select id="selectCoinAddress" resultType="java.lang.String">
+    select coin_address
+    from channel_coin_address_deposit_pool
+    where coin_address = #{coinAddress} and asset_code = #{assetCode}
+  </select>
+
+</mapper>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ourdax.coindocker.dao.TransferOutDao">
+  <resultMap id="BaseResultMap" type="com.ourdax.coindocker.domain.TransferOut">
+    <id column="id" property="id" jdbcType="INTEGER"/>
+    <result column="asset_code" property="assetCode" jdbcType="VARCHAR"/>
+    <result column="amount" property="amount" jdbcType="DECIMAL"/>
+    <result column="tx_fee" property="txFee" jdbcType="DECIMAL"/>
+    <result column="from_account" property="fromAccount" jdbcType="VARCHAR"/>
+    <result column="from_coin_address" property="fromCoinAddress" jdbcType="VARCHAR"/>
+    <result column="to_coin_address" property="toCoinAddress" jdbcType="VARCHAR"/>
+    <result column="inner_order_no" property="innerOrderNo" jdbcType="VARCHAR"/>
+    <result column="tx_id" property="txId" jdbcType="VARCHAR"/>
+    <result column="asset_symbol" property="assetSymbol" jdbcType="VARCHAR"/>
+    <result column="state" property="state" jdbcType="CHAR"/>
+    <result column="tx_num" property="txNum" jdbcType="VARCHAR"/>
+    <result column="error_message" property="errorMessage" jdbcType="VARCHAR"/>
+    <result column="query" property="query" jdbcType="INTEGER"/>
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP"/>
+    <result column="confirm_num" property="confirmNum" jdbcType="INTEGER"/>
+    <result column="withdraw_status" property="withdrawStatus" jdbcType="CHAR"/>
+    <result column="fail_message" property="failMessage" jdbcType="VARCHAR"/>
+  </resultMap>
+
+  <sql id="fields">
+    id,
+    asset_code as assetCode,
+    amount,
+    tx_fee as txFee,
+    from_account as fromAccount,
+    from_coin_address as fromCoinAddress,
+    to_coin_address as toCoinAddress,
+    inner_order_no as innerOrderNo,
+    tx_id as txId,
+    asset_symbol as assetSymbol,
+    state,
+    tx_num as txNum,
+    error_message as errorMessage,
+    query,
+    create_date as createDate,
+    update_date as updateDate,
+    confirm_num as confirmNum,
+    withdraw_status as withdrawStatus,
+    fail_message as failMessage
+  </sql>
+
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="transferOut.id">
+    insert into ${table} (
+    asset_code,
+    amount,
+    tx_fee,
+    from_account,
+    from_coin_address,
+    to_coin_address,
+    inner_order_no,
+    tx_id,
+    fail_message)
+    values (
+    #{transferOut.assetCode},
+    #{transferOut.amount},
+    #{transferOut.txFee},
+    #{transferOut.fromAccount},
+    #{transferOut.fromCoinAddress},
+    #{transferOut.toCoinAddress},
+    #{transferOut.innerOrderNo},
+    #{transferOut.txId},
+    #{transferOut.failMessage}
+    )
+  </insert>
+
+  <update id="updateWithdrawStatusById">
+    update ${table}
+    <set>
+      <if test="transferOut.confirmNum != null">
+        confirm_num = #{transferOut.confirmNum},
+      </if>
+      <if test="transferOut.txNum != null">
+        tx_num = #{transferOut.confirmNum},
+      </if>
+      <if test="transferOut.failMessage != null">
+        fail_message = #{transferOut.failMessage},
+      </if>
+      <if test="transferOut.errorMessage != null">
+        error_message = #{transferOut.errorMessage},
+      </if>
+      <if test="transferOut.txId != null">
+        tx_id = #{transferOut.txId},
+      </if>
+      withdraw_status = #{transferOut.withdrawStatus},
+      update_date = #{transferOut.updateDate}
+    </set>
+    where id = #{transferOut.id}
+  </update>
+
+  <select id="selectPendings" resultMap="BaseResultMap">
+    select <include refid="fields"/>
+    from ${table}
+    where create_date >= #{from} and withdraw_status in ('CONFIRMING', 'LONGTIME') and tx_id != ''
+  </select>
+
+  <select id="selectUnsents" resultMap="BaseResultMap">
+    select <include refid="fields"/>
+    from ${table}
+    where create_date >= #{from} and withdraw_status = 'NEW'
+  </select>
+
+
+  <select id="selectById" resultMap="BaseResultMap">
+   select <include refid="fields"/>
+   from ${table}
+   where id = #{id}
+  </select>
+
+  <update id="updateTxId">
+    update ${table}
+    set tx_id = #{transferOut.txId}
+    where id = #{transferOut.id}
+  </update>
+
+</mapper>

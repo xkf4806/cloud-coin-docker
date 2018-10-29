@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ourdax.coindocker.dao.MQProduceLogDao">
+  <resultMap id="BaseResultMap" type="com.ourdax.coindocker.domain.MQProduceLog" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="exchange_name" property="exchangeName" jdbcType="VARCHAR" />
+    <result column="router_key" property="routerKey" jdbcType="VARCHAR" />
+    <result column="message" property="message" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="CHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, exchange_name, router_key, message, status, create_time, update_time
+  </sql>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    insert into mq_produce_log (
+    exchange_name,
+    router_key,
+    message
+    ) values (
+      #{exchangeName},
+      #{routerKey},
+      #{message}
+    )
+  </insert>
+
+
+  <insert id="batchInsert">
+     insert into mq_produce_log (
+    exchange_name,
+    router_key,
+    message
+    ) values
+    <foreach collection="list" item="item" separator=",">
+      (
+      exchange_name,
+      routerKey,
+      message
+      )
+    </foreach>
+  </insert>
+
+  <select id="selectByCreateTimeAndStatus" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from mq_produce_log
+    where create_time >= #{start} and create_time &lt;= #{end} and status = #{status}
+  </select>
+
+  <delete id="deleteSuccessByCreateTime">
+    delete from mq_produce_log
+    where create_time &lt;= #{end} and status = 'SUCCESS'
+  </delete>
+
+  <update id="updateStatus">
+    update mq_produce_log
+    set status = #{status}
+    where id = #{id}
+  </update>
+
+
+  <update id="batchUpdateStatus" parameterType="java.util.List">
+    <foreach collection="list" item="item" open="begin" close="end" separator=";" >
+      update mq_produce_log
+      set `status` = #{item.status}
+      where id = #{item.id}
+    </foreach>
+  </update>
+
+</mapper>

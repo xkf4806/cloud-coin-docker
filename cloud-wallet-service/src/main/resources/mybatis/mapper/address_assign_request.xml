@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ourdax.coindocker.dao.AddressAssignRequestDao">
+  <resultMap id="BaseResultMap" type="com.ourdax.coindocker.domain.AddressAssignRequestLog">
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="asset" property="asset" jdbcType="VARCHAR" />
+    <result column="snapshotId" property="snapshotId" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="CHAR" />
+    <result column="assignedAddr" property="assignedAddr" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="fields">
+    id,
+    asset,
+    snapshotId,
+    status,
+    assignedAddr,
+    createTime,
+    updateTime
+  </sql>
+
+  <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+    INSERT INTO address_assign_request_log (
+    asset,
+    snapshotId,
+    status,
+    assignedAddr
+    ) VALUES (
+    #{asset},
+    #{snapshotId},
+    #{status},
+    #{assignedAddr}
+    )
+  </insert>
+
+  <update id="updateBySnapshotId" parameterType="com.ourdax.coindocker.domain.AddressAssignRequestLog">
+    UPDATE address_assign_request_log
+    SET status=#{status},assignedAddr=#{assignedAddr}
+    WHERE snapshotId=#{snapshotId}
+
+  </update>
+
+  <select id="selectBySnapshotId" resultMap="BaseResultMap">
+    SELECT <include refid="fields"/>
+    FROM address_assign_request_log
+    WHERE snapshotId=#{snapshotId}
+  </select>
+</mapper>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ourdax.coindocker.dao.OfflineAddressDao">
+
+  <resultMap id="BaseResultMap" type="com.ourdax.coindocker.domain.OfflineAddress">
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="assetCode" property="assetCode" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="maxAmount" property="maxAmount" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="CHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="fields">
+    id,
+    assetCode,
+    address,
+    amount,
+    maxAmount,
+    status,
+    createTime,
+    updateTime
+  </sql>
+
+  <update id="update" parameterType="com.ourdax.coindocker.domain.OfflineAddress">
+    UPDATE offline_address
+    SET
+    <if test="amount != null">
+      amount = #{amount},
+    </if>
+    <if test="maxAmount != null">
+      maxAmount = #{maxAmount},
+    </if>
+    status = #{status}
+    WHERE id = #{id}
+  </update>
+
+  <update id="updateBatch" parameterType="java.util.List">
+    UPDATE offline_address
+    SET status =
+    <foreach collection="offlineAddresses" item="item" open="case id" close="end,">
+      WHEN #{item.id} THEN #{item.status}
+    </foreach>
+    amount =
+    <foreach collection="offlineAddresses" item="item" open="case id" close="end,">
+      WHEN #{item.id} THEN #{item.amount}
+    </foreach>
+    maxAmount =
+    <foreach collection="offlineAddresses" item="item" open="case id" close="end">
+      WHEN #{item.id} THEN #{item.maxAmount}
+    </foreach>
+    WHERE id IN
+    <foreach collection="offlineAddresses" item="item" separator="," open="(" close=")">
+      #{item.id}
+    </foreach>
+  </update>
+
+  <select id="queryAddressByStatus" resultMap="BaseResultMap">
+    SELECT <include refid="fields"/>
+    FROM offline_address
+    WHERE assetCode = #{assetCode}
+    AND status IN
+    <foreach collection="offlineAddrStatuses" item="status" separator="," open="(" close=")">
+      #{status}
+    </foreach>
+    ORDER BY updateTime DESC
+  </select>
+
+  <select id="queryByAddressAndAsset" resultMap="BaseResultMap">
+    SELECT <include refid="fields"/>
+    FROM offline_address
+    WHERE address=#{targetAddress}
+    AND assetCode=#{asset}
+  </select>
+
+</mapper>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ourdax.coindocker.dao.TransferInDao">
+  <resultMap id="BaseResultMap" type="com.ourdax.coindocker.domain.TransferIn">
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="asset_code" property="assetCode" jdbcType="VARCHAR" />
+    <result column="tx_id" property="txId" jdbcType="VARCHAR" />
+    <result column="block_num" property="blockNum" jdbcType="BIGINT" />
+    <result column="blockhash" property="blockhash" jdbcType="VARCHAR" />
+    <result column="to_coin_address" property="toCoinAddress" jdbcType="VARCHAR" />
+    <result column="vout" property="vout" jdbcType="VARCHAR" />
+    <result column="from_coin_address" property="fromCoinAddress" jdbcType="VARCHAR" />
+    <result column="category" property="category" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="CHAR" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="assset_id" property="assetId" jdbcType="TINYINT" />
+    <result column="in_address" property="inAddress" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="confirm_num" property="confirmNum" jdbcType="INTEGER" />
+    <result column="deposit_status" property="depositStatus" jdbcType="CHAR" />
+    <result column="fail_message" property="failMessage" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="fields">
+    id,
+    asset_code as assetCode,
+    tx_id as txId,
+    block_num as blockNum,
+    blockhash,
+    to_coin_address as toCoinAddress,
+    from_coin_address as fromCoinAddress,
+    vout,
+    category,
+    state,
+    amount,
+    asset_id as assetId,
+    in_address as inAddress,
+    create_date as createDate,
+    update_date as updateDate,
+    confirm_num as confirmNum,
+    deposit_status as depositStatus,
+    fail_message as failMessage
+  </sql>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="transferIn.id">
+    insert ignore into ${table} (
+    asset_code,
+    tx_id,
+    block_num,
+    blockhash,
+    to_coin_address,
+    vout,
+    from_coin_address,
+    category,
+    amount,
+    confirm_num,
+    fail_message)
+    values (
+      #{transferIn.assetCode},
+      #{transferIn.txId},
+      #{transferIn.blockNum},
+      #{transferIn.blockhash},
+      #{transferIn.toCoinAddress},
+      #{transferIn.vout},
+      #{transferIn.fromCoinAddress},
+      #{transferIn.category},
+      #{transferIn.amount},
+      #{transferIn.confirmNum},
+      #{transferIn.failMessage}
+    )
+  </insert>
+
+  <update id="updateTransferStatus">
+    update ${table}
+    <set>
+      confirm_num = #{transferIn.confirmNum},
+      deposit_status = #{transferIn.depositStatus},
+      block_num = #{transferIn.blockNum},
+      blockhash = #{transferIn.blockhash},
+      update_date = #{transferIn.updateDate}
+    </set>
+    where id= #{transferIn.id}
+
+  </update>
+
+  <select id="selectPendings" resultMap="BaseResultMap">
+    select <include refid="fields"/>
+    from ${table}
+    where create_date >= #{from} and deposit_status in ('NEW', 'CONFIRMING', 'LONGTIME')
+  </select>
+
+  <select id="selectCountByTxId" resultType="int">
+    select count(1)
+    from ${table}
+    where tx_id = #{txId} and to_coin_address = #{to} and vout = #{vout}
+  </select>
+
+  <select id="selectLastestTxOfSwt" resultMap="BaseResultMap">
+    select <include refid="fields"/>
+    from transfer_in_swt
+    where to_coin_address = #{to} order by create_date limit 1;
+  </select>
+
+  <select id="querySWTTransByTxId" resultType="com.ourdax.coindocker.domain.TransferIn">
+    select <include refid="fields"/>
+    from transfer_in_swt
+    where tx_id = #{txId}
+  </select>
+
+</mapper>

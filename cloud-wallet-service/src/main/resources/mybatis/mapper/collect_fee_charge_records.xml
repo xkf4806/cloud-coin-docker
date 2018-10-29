@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ourdax.coindocker.dao.CollectFeeChargeRecordDao">
+  <resultMap id="BaseResultMap" type="com.ourdax.coindocker.domain.CollectFeeChargeRecord">
+    <id column="id" property="id" jdbcType="INTEGER"/>
+    <result column="assetCode" property="assetCode" jdbcType="VARCHAR"/>
+    <result column="amount" property="amount" jdbcType="DECIMAL"/>
+    <result column="txFee" property="txFee" jdbcType="DECIMAL"/>
+    <result column="fromAccount" property="fromAccount" jdbcType="VARCHAR"/>
+    <result column="fromCoinAddress" property="fromCoinAddress" jdbcType="VARCHAR"/>
+    <result column="toCoinAddress" property="toCoinAddress" jdbcType="VARCHAR"/>
+    <result column="txId" property="txId" jdbcType="VARCHAR"/>
+    <result column="transactionStatus" property="transactionStatus" jdbcType="CHAR"/>
+    <result column="errorMessage" property="errorMessage" jdbcType="VARCHAR"/>
+    <result column="confirmNum" property="confirmNum" jdbcType="INTEGER"/>
+    <result column="createDate" property="createDate" jdbcType="TIMESTAMP"/>
+    <result column="updateDate" property="updateDate" jdbcType="TIMESTAMP"/>
+    <result column="collectionId" property="collectionId" jdbcType="VARCHAR"/>
+  </resultMap>
+
+  <sql id="fields">
+    id,
+    assetCode,
+    amount,
+    txFee,
+    fromAccount,
+    fromCoinAddress,
+    toCoinAddress,
+    txId,
+    transactionStatus,
+    errorMessage,
+    confirmNum,
+    createDate,
+    updateDate,
+    collectionId
+  </sql>
+
+  <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+    INSERT INTO collect_fee_charge_records (
+    assetCode,
+    amount,
+    txFee,
+    fromAccount,
+    fromCoinAddress,
+    toCoinAddress,
+    txId,
+    transactionStatus,
+    errorMessage,
+    confirmNum,
+    createDate,
+    updateDate,
+    collectionId
+    ) VALUES (
+    #{assetCode},
+    #{amount},
+    #{txFee},
+    #{fromAccount},
+    #{fromCoinAddress},
+    #{toCoinAddress},
+    #{txId},
+    #{transactionStatus},
+    #{errorMessage},
+    #{confirmNum},
+    #{createDate},
+    #{updateDate},
+    #{collectionId}
+    )
+  </insert>
+
+  <update id="update" parameterType="com.ourdax.coindocker.domain.CollectFeeChargeRecord">
+    UPDATE collect_fee_charge_records
+    <set>
+      <if test="txFee != null">
+        txFee = #{txFee},
+      </if>
+      <if test="txId != null">
+        txId = #{txId},
+      </if>
+      <if test="errorMessage != null">
+        errorMessage = #{errorMessage},
+      </if>
+      confirmNum = #{confirmNum},
+      transactionStatus = #{transactionStatus}
+    </set>
+    WHERE id=#{id}
+
+  </update>
+
+  <select id="queryConfirmingRecords" resultMap="BaseResultMap">
+    SELECT
+    <include refid="fields"/>
+    FROM collect_fee_charge_records
+    WHERE assetCode=#{assetCode}
+  </select>
+</mapper>

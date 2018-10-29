@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.masterdax</groupId>
+  <artifactId>cloud-wallet</artifactId>
+  <packaging>pom</packaging>
+  <version>1.1.0-SNAPSHOT</version>
+  <modules>
+    <module>cloud-wallet-common</module>
+    <module>cloud-wallet-service</module>
+    <module>cloud-wallet-job</module>
+    <module>cloud-wallet-server</module>
+    <module>cloud-wallet-doc</module>
+    <module>cloud-wallet-asset-act</module>
+    <module>cloud-wallet-asset-eth</module>
+    <module>cloud-wallet-asset-qtum</module>
+    <module>cloud-wallet-facade</module>
+  </modules>
+
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>1.4.5.RELEASE</version>
+  </parent>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <java.version>1.8</java.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.masterdax</groupId>
+        <artifactId>cloud-wallet.cloud-wallet-common</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.masterdax</groupId>
+        <artifactId>cloud-wallet.cloud-wallet-service</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.masterdax</groupId>
+        <artifactId>cloud-wallet.cloud-wallet-job</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.github.pagehelper</groupId>
+        <artifactId>pagehelper</artifactId>
+        <version>4.1.3</version>
+      </dependency>
+      <dependency>
+        <groupId>com.zaxxer</groupId>
+        <artifactId>HikariCP</artifactId>
+        <version>2.6.1</version>
+      </dependency>
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>5.1.21</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>22.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.7</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mybatis</groupId>
+        <artifactId>mybatis</artifactId>
+        <version>3.4.1</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>core</artifactId>
+        <version>3.2.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.neemre.btcd-cli4j</groupId>
+        <artifactId>btcd-cli4j-core</artifactId>
+        <version>0.6.0</version>
+      </dependency>
+
+
+      <dependency>
+        <groupId>com.github.briandilley.jsonrpc4j</groupId>
+        <artifactId>jsonrpc4j</artifactId>
+        <version>1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore</artifactId>
+        <version>4.4.6</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>4.5.3</version>
+      </dependency>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger2</artifactId>
+        <version>2.5.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger-ui</artifactId>
+        <version>2.5.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>fastjson</artifactId>
+        <version>1.2.34</version>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.mail</groupId>
+        <artifactId>mail</artifactId>
+        <version>1.4.7</version>
+      </dependency>
+
+      <!--<dependency>-->
+      <!--<groupId>com.jingtum</groupId>-->
+      <!--<artifactId>jingtum-sdk</artifactId>-->
+      <!--<version>1.1.0</version>-->
+      <!--</dependency>-->
+      <dependency>
+        <groupId>org.bitcoinj</groupId>
+        <artifactId>bitcoinj-core</artifactId>
+        <version>0.14.7</version>
+        <scope>compile</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <id>mvn-nemp-ftp</id>
+      <name>Nemp's Maven Repository</name>
+      <url>http://mvn.neemre.com/</url>
+    </repository>
+    <repository>
+    <id>dax-release</id>
+    <name>Nexus Release Repository</name>
+    <url>http://daxnexus.oldcoin.ink:8081/repository/dax-repo/</url>
+    </repository>
+  </repositories>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!--Compiler-->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>${java.version}</source>
+            <target>${java.version}</target>
+          </configuration>
+        </plugin>
+
+        <!--Spring boot-->
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <dependencies>
+            <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>springloaded</artifactId>
+              <version>${spring-loaded.version}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+      </plugins>
+
+    </pluginManagement>
+  </build>
+
+  <!--<distributionManagement>-->
+    <!--<repository>-->
+      <!--<id>dax-release</id>-->
+      <!--<name>Nexus Release Repository</name>-->
+      <!--<url>http://daxnexus.oldcoin.ink:8081/repository/dax-repo/</url>-->
+    <!--</repository>-->
+    <!--<snapshotRepository>-->
+      <!--<id>dax-snapshot</id>-->
+      <!--<name>Nexus Snapshot Repository</name>-->
+      <!--<url>http://daxnexus.oldcoin.ink:8081/repository/dax-repo/</url>-->
+    <!--</snapshotRepository>-->
+  <!--</distributionManagement>-->
+
+</project>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ourdax.coindocker.dao.CollectionRecordsDao">
+  <resultMap id="BaseResultMap" type="com.ourdax.coindocker.domain.CollectionRecords">
+    <id column="id" property="id" jdbcType="INTEGER"/>
+    <result column="assetCode" property="assetCode" jdbcType="VARCHAR"/>
+    <result column="sourceAddr" property="sourceAddr" jdbcType="VARCHAR"/>
+    <result column="targetAddr" property="targetAddr" jdbcType="VARCHAR"/>
+    <result column="txId" property="txId" jdbcType="VARCHAR"/>
+    <result column="fee" property="fee" jdbcType="DECIMAL"/>
+    <result column="amount" property="amount" jdbcType="DECIMAL"/>
+    <result column="status" property="status" jdbcType="CHAR"/>
+    <result column="collectType" property="collectType" jdbcType="CHAR"/>
+    <result column="errorMessage" property="errorMessage" jdbcType="VARCHAR"/>
+    <result column="errorMsg" property="errorMsg" jdbcType="VARCHAR"/>
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <sql id="fields">
+    id,
+    assetCode,
+    sourceAddr,
+    targetAddr,
+    txId,
+    fee,
+    amount,
+    status,
+    collectType,
+    errorMsg,
+    createTime,
+    updateTime
+  </sql>
+
+  <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+    INSERT INTO collection_records (
+    assetCode,
+    sourceAddr,
+    targetAddr,
+    txId,
+    fee,
+    amount,
+    status,
+    collectType,
+    errorMsg,
+    createTime,
+    updateTime
+    ) VALUES (
+    #{assetCode},
+    #{sourceAddr},
+    #{targetAddr},
+    #{txId},
+    #{fee},
+    #{amount},
+    #{status},
+    #{collectType},
+    #{errorMsg},
+    #{createTime},
+    #{updateTime}
+    )
+  </insert>
+
+  <update id="update" parameterType="com.ourdax.coindocker.domain.CollectFeeChargeRecord">
+    UPDATE collection_records
+    <set>
+      <if test="fee != null">
+        fee = #{fee},
+      </if>
+      <if test="txId != null">
+        txId = #{txId},
+      </if>
+      <if test="errorMsg != null">
+        errorMsg = #{errorMsg},
+      </if>
+      status = #{status}
+    </set>
+    WHERE id=#{id}
+
+  </update>
+
+  <update id="updateStatusById">
+    UPDATE collection_records
+    <set>
+      status = #{status}
+    </set>
+    WHERE id=#{collectionId}
+  </update>
+
+  <select id="queryRecordsByAssetAndStatus" resultMap="BaseResultMap">
+    SELECT
+    <include refid="fields"/>
+    FROM collection_records
+    WHERE assetCode=#{assetCode}
+    AND status IN
+    <foreach collection="collectOrderStatuses" item="status" open="(" separator="," close=")">
+      #{status}
+    </foreach>
+  </select>
+
+  <select id="queryTotalUnCollectedAmountByTargetAddress" resultType="java.math.BigDecimal">
+    SELECT
+    SUM(amount)
+    FROM collection_records
+    WHERE assetCode=#{assetCode}
+    AND status IN
+    <foreach collection="collectOrderStatuses" item="status" open="(" separator="," close=")">
+      #{status}
+    </foreach>
+  </select>
+</mapper>

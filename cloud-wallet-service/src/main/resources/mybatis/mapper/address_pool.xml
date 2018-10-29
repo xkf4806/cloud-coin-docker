@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ourdax.coindocker.dao.AddressPoolDao">
+  <resultMap id="BaseResultMap" type="com.ourdax.coindocker.domain.AddressPool">
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="asset_code" property="assetCode" jdbcType="VARCHAR" />
+    <result column="coin_address" property="coinAddress" jdbcType="VARCHAR" />
+    <result column="address_status" property="addressStatus" jdbcType="CHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="fields">
+    id,
+    asset_code as assetCode,
+    coin_address as coinAddress,
+    address_status as addressStatus,
+    create_date as createDate,
+    update_date as updateDate
+  </sql>
+
+  <select id="selectCoinAddress" resultMap="BaseResultMap">
+    select <include refid="fields"/>
+    from ${table}
+    where coin_address = #{coinAddress}
+  </select>
+
+  <select id="selectOneUnusedAddress" resultMap="BaseResultMap">
+    select <include refid="fields"/>
+    from ${table}
+    where address_status='NEW' limit 1;
+  </select>
+
+  <update id="updateById" parameterType="com.ourdax.coindocker.domain.AddressPool">
+    UPDATE ${table}
+    SET address_status=#{addressPool.addressStatus}
+    WHERE id=#{addressPool.id}
+  </update>
+
+</mapper>
